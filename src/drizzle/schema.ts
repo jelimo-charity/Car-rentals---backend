@@ -1,5 +1,34 @@
 import { pgTable, boolean, serial, varchar, text, timestamp, integer, pgEnum, numeric } from 'drizzle-orm/pg-core';
 
+
+// types
+export type TIUser = typeof Users.$inferInsert;
+export type TSUser = typeof Users.$inferSelect;
+
+export type TIAuth = typeof auth.$inferInsert;
+export type TSAuth = typeof auth.$inferSelect;
+
+export type TIVehicle = typeof Vehicles.$inferInsert;
+export type TSVehicle = typeof Vehicles.$inferSelect;
+
+export type TIVehicleSpecification = typeof VehicleSpecifications.$inferInsert;
+export type TSVehicleSpecification = typeof VehicleSpecifications.$inferSelect;
+
+export type TIBooking = typeof Bookings.$inferInsert;
+export type TSBooking = typeof Bookings.$inferSelect;
+
+export type TILocation = typeof Locations.$inferInsert;
+export type TSLocation = typeof Locations.$inferSelect;
+
+export type TIPayment = typeof Payments.$inferInsert;
+export type TSPayment = typeof Payments.$inferSelect;
+
+export type TICustomerSupportTicket = typeof CustomerSupportTickets.$inferInsert;
+export type TSCustomerSupportTicket = typeof CustomerSupportTickets.$inferSelect;
+
+export type TIFleetManagement = typeof FleetManagement.$inferInsert;
+export type TSFleetManagement = typeof FleetManagement.$inferSelect;
+
 // 1.USERS TABLE
 export const userRoles = pgEnum("userRoles", ["admin", "user"])
 
