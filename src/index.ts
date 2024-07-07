@@ -8,6 +8,8 @@ import { BookingRouter } from "./bookings/bookings.router";
 import { LocationRouter } from "./location/location.router";
 import { FleetManagementRouter } from "./fleetManagement/fleet.router";
 import { CustomerSupportTicketRouter } from "./customerSupport/customerSupport.router";
+import { authRouter } from "./drizzle/auth/auth.router";
+import { usersRouter } from "./users/users.router";
 
 const app = new Hono();
 
@@ -22,6 +24,9 @@ app.get("/", async (c) => {
  app.route('/', LocationRouter) 
  app.route("/",FleetManagementRouter)
  app.route("/", CustomerSupportTicketRouter)
+
+ app.route("/", usersRouter)
+ app.route("/", authRouter)
 
 
  
