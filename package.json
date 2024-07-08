@@ -15,6 +15,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/formidable": "^3.4.5",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.14.9",
     "@types/pg": "^8.11.6",
@@ -33,11 +34,14 @@
     "@neondatabase/serverless": "^0.9.4",
     "@types/bcrypt": "^5.0.2",
     "bcrypt": "^5.1.1",
+    "cloudinary": "^2.2.0",
     "context": "^3.0.29",
     "cors": "^2.8.5",
+    "formidable": "^3.5.1",
     "hono": "^4.4.11",
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.12.0",
+    "stripe": "^16.2.0",
     "zod": "^3.23.8",
     "zod-validator": "^1.0.1"
   }

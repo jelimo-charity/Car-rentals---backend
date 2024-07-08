@@ -57,6 +57,7 @@ export const Vehicles = pgTable('vehicles', {
     id: serial('id').primaryKey(),
     rental_rate: numeric('rental_rate').notNull(),
     availability: boolean('availability').default(true),
+    image_url: varchar('image_url', { length: 255 }).notNull(),
     created_at: timestamp('created_at').defaultNow().notNull(),
     updated_at: timestamp('updated_at').defaultNow().notNull(),
   });
@@ -105,15 +106,15 @@ export const Bookings = pgTable('bookings', {
 
   //7. Payments table definition
 export const Payments = pgTable('payments', {
-    id: serial('id').primaryKey(),
-    booking_id: integer('booking_id').notNull().references(() => Bookings.id, { onDelete: 'cascade' }),
-    amount: numeric('amount').notNull(),
-    payment_status: varchar('payment_status', { length: 50 }).default('Pending').notNull(),
-    payment_date: timestamp('payment_date').notNull(),
-    payment_method: varchar('payment_method', { length: 255 }).notNull(),
-    transaction_id: varchar('transaction_id', { length: 255 }).notNull(),
-  
-  });
+  id: serial('id').primaryKey(),
+  booking_id: integer('booking_id').notNull().references(() => Bookings.id, { onDelete: 'cascade' }),
+  amount: numeric('amount').notNull(),
+  payment_status: varchar('payment_status', { length: 50 }).default('Pending').notNull(),
+  payment_date: timestamp('payment_date').notNull(),
+  payment_method: varchar('payment_method', { length: 255 }).notNull(),
+  transaction_id: varchar('transaction_id', { length: 255 }).notNull(),
+});
+
 
   //8. CustomerSupportTickets table definition
 export const CustomerSupportTickets = pgTable('customer_support_tickets', {
@@ -138,3 +139,10 @@ export const FleetManagement = pgTable('fleet_management', {
     created_at: timestamp('created_at').defaultNow().notNull(),
     updated_at: timestamp('updated_at').defaultNow().notNull(),
   });
+
+  // 10. Featured table
+export const Featured = pgTable("Featured", {
+  id: serial('id').primaryKey(),
+  vehicle_id: integer('vehicle_id').notNull().references(() => Vehicles.id, { onDelete: 'cascade' }),
+  
+})

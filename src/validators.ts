@@ -21,6 +21,7 @@ export const VehicleSchema = z.object({
   id: z.number().int(),
   rental_rate: z.number(),
   availability: z.boolean().default(true),
+  image_url: z.string().url().optional(),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),
 });
