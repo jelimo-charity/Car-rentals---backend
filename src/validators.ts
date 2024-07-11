@@ -1,3 +1,4 @@
+import { varchar } from 'drizzle-orm/pg-core';
 import { z } from 'zod';
 
 export const UserSchema = z.object({
@@ -18,16 +19,14 @@ export const AuthSchema = z.object({
 });
 
 export const VehicleSchema = z.object({
-  id: z.number().int(),
   rental_rate: z.number(),
-  availability: z.boolean().default(true),
-  image_url: z.string().url().optional(),
+  availability: z.boolean(),
+  image_url: z.string().url(),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),
 });
 
 export const VehicleSpecificationSchema = z.object({
-  id: z.number().int(),
   vehicle_id: z.number().int(),
   manufacturer: z.string().max(255),
   model: z.string().max(255),
@@ -40,24 +39,24 @@ export const VehicleSpecificationSchema = z.object({
   features: z.string(),
 });
 
+
 export const BookingSchema = z.object({
-  id: z.number().int(),
+  id: z.number().int().optional(), // Auto-generated, so it's optional
   user_id: z.number().int(),
   vehicle_id: z.number().int(),
   location_id: z.number().int(),
-  booking_date: z.date(),
-  return_date: z.date(),
+  booking_date: z.string(),
+  return_date: z.string(),
   total_amount: z.number(),
-  booking_status: z.string().max(50).default('Pending'),
-  created_at: z.date().optional(),
-  updated_at: z.date().optional(),
+  booking_status: z.string().max(50).optional(),
+  created_at: z.date().optional(), // Auto-generated
+  updated_at: z.date().optional(), // Auto-generated
 });
 
 export const LocationSchema = z.object({
-  id: z.number().int(),
   name: z.string().max(255),
   address: z.string().max(255),
-  contact_phone: z.string().max(15),
+  contact_phone: z.string(),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),
 });

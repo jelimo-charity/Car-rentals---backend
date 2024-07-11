@@ -1,38 +1,41 @@
-import { db } from './../drizzle/db';
-import { eq } from 'drizzle-orm';
-import { Vehicles, TIVehicle, TSVehicle } from '../drizzle/schema';
-import { uploadImage } from '../imageUpload/imageUpload.service';
 
-export const getVehiclesService = async (): Promise<TSVehicle[] | null> => {
-  const VehiclesData = await db.select().from(Vehicles);
-  return VehiclesData;
+import { eq } from 'drizzle-orm';
+import { TIVehicle, TSVehicle, Vehicles } from '../drizzle/schema';
+import { db } from '../drizzle/db';
+
+// Get all Vehicles
+export const VehiclesService = async (limit?: number): Promise<TSVehicle[] | null> => {
+    if (limit) {
+        return await db.select().from(Vehicles).limit(limit).execute();
+    }
+    return await db.select().from(Vehicles).execute();
 }
 
+// Get a single Vehicle by id
 export const getVehicleService = async (id: number): Promise<TSVehicle | undefined> => {
-  const VehicleData = await db.select().from(Vehicles).where(eq(Vehicles.id, id)).execute();
-  if (VehicleData.length === 0) {
-    return undefined;
-  }
-  return VehicleData[0];
-};
+    const VehicleArray = await db.select().from(Vehicles).where(eq(Vehicles.id, id)).execute();
 
-export const createVehicleService = async (vehicle: TIVehicle, imagePath: string) => {
-  const imageUrl = await uploadImage(imagePath); // Upload the image and get the URL
-  const vehicleWithImage = { ...vehicle, image_url: imageUrl }; // Add image URL to the vehicle data
-  await db.insert(Vehicles).values(vehicleWithImage).execute();
-  return "Vehicle created successfully";
-};
+    if (VehicleArray.length === 0) {
+        return undefined;
+    }
 
-export const updateVehicleService = async (id: number, vehicle: TIVehicle, imagePath?: string) => {
-  if (imagePath) {
-    const imageUrl = await uploadImage(imagePath); // Upload the image and get the URL
-    vehicle = { ...vehicle, image_url: imageUrl }; // Add/Update image URL to the vehicle data
-  }
-  await db.update(Vehicles).set(vehicle).where(eq(Vehicles.id, id)).execute();
-  return "Vehicle updated successfully";
-};
+    return VehicleArray[0];
+}
 
+// Create a new Vehicle
+export const createVehicleService = async (Vehicle: TIVehicle) => {
+    await db.insert(Vehicles).values(Vehicle).execute();
+    return "Vehicle created successfully";
+}
+
+// Update a Vehicle
+export const updateVehicleService = async (id: number, Vehicle: TIVehicle) => {
+    await db.update(Vehicles).set(Vehicle).where(eq(Vehicles.id, id)).execute();
+    return "Vehicle updated successfully";
+}
+
+// Delete a Vehicle
 export const deleteVehicleService = async (id: number) => {
-  await db.delete(Vehicles).where(eq(Vehicles.id, id)).execute();
-  return "Vehicle deleted successfully";
-};
+    await db.delete(Vehicles).where(eq(Vehicles.id, id)).execute();
+    return "Vehicle deleted successfully";
+}

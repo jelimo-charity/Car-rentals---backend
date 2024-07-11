@@ -1,4 +1,6 @@
+import { relations } from 'drizzle-orm';
 import { pgTable, boolean, serial, varchar, text, timestamp, integer, pgEnum, numeric } from 'drizzle-orm/pg-core';
+import { number } from 'zod';
 
 
 // types
@@ -55,7 +57,7 @@ export const Users = pgTable('users', {
 
 export const Vehicles = pgTable('vehicles', {
     id: serial('id').primaryKey(),
-    rental_rate: numeric('rental_rate').notNull(),
+    rental_rate: integer('rental_rate').notNull(),
     availability: boolean('availability').default(true),
     image_url: varchar('image_url', { length: 255 }).notNull(),
     created_at: timestamp('created_at').defaultNow().notNull(),
@@ -99,7 +101,7 @@ export const Bookings = pgTable('bookings', {
     id: serial('id').primaryKey(),
     name: varchar('name', { length: 255 }).notNull(),
     address: varchar('address', { length: 255 }).notNull(),
-    contact_phone: varchar('contact_phone', { length: 15 }).notNull(),
+    contact_phone: varchar('contact_phone').notNull(),
     created_at: timestamp('created_at').defaultNow().notNull(),
     updated_at: timestamp('updated_at').defaultNow().notNull(),
   });
@@ -146,3 +148,89 @@ export const Featured = pgTable("Featured", {
   vehicle_id: integer('vehicle_id').notNull().references(() => Vehicles.id, { onDelete: 'cascade' }),
   
 })
+
+
+// relations
+
+// Users and Auth relations
+export const userRelations = relations(Users, ({ one, many }) => ({
+  authentication: one(auth, {
+    fields: [Users.id],
+    references: [auth.user_id]
+  }),
+  bookings: many(Bookings),
+  customerSupportTickets: many(CustomerSupportTickets)
+}));
+
+// Vehicles and VehicleSpecifications relations
+export const vehicleRelations = relations(Vehicles, ({ one, many }) => ({
+  vehicleSpecifications: one(VehicleSpecifications, {
+    fields: [Vehicles.id],
+    references: [VehicleSpecifications.vehicle_id]
+  }),
+  bookings: one(Bookings, {
+    fields: [Vehicles.id],
+    references: [Bookings.vehicle_id]
+  }),
+  fleetManagement: one(FleetManagement, {
+    fields: [Vehicles.id],
+    references: [FleetManagement.vehicle_id]
+  })
+}));
+
+// Bookings and related entities
+export const bookingRelations = relations(Bookings, ({ one }) => ({
+  user: one(Users, {
+    fields: [Bookings.user_id],
+    references: [Users.id]
+  }),
+  vehicle: one(Vehicles, {
+    fields: [Bookings.vehicle_id],
+    references: [Vehicles.id]
+  }),
+  location: one(Locations, {
+    fields: [Bookings.location_id],
+    references: [Locations.id]
+  }),
+  payment: one(Payments, {
+    fields: [Bookings.id],
+    references: [Payments.booking_id]
+  })
+}));
+
+// Locations and Bookings relations
+export const locationRelations = relations(Locations, ({ one, many }) => ({
+  bookings: many(Bookings)
+}));
+
+// Payments and Bookings relations
+export const paymentRelations = relations(Payments, ({ one }) => ({
+  booking: one(Bookings, {
+    fields: [Payments.booking_id],
+    references: [Bookings.id]
+  })
+}));
+
+// CustomerSupportTickets and Users relations
+export const customerSupportTicketRelations = relations(CustomerSupportTickets, ({ one }) => ({
+  user: one(Users, {
+    fields: [CustomerSupportTickets.user_id],
+    references: [Users.id]
+  })
+}));
+
+// FleetManagement and Vehicles relations
+export const fleetManagementRelations = relations(FleetManagement, ({ one }) => ({
+  vehicle: one(Vehicles, {
+    fields: [FleetManagement.vehicle_id],
+    references: [Vehicles.id]
+  })
+}));
+
+// Featured and Vehicles relations
+export const featuredRelations = relations(Featured, ({ one }) => ({
+  vehicle: one(Vehicles, {
+    fields: [Featured.vehicle_id],
+    references: [Vehicles.id]
+  })
+}));

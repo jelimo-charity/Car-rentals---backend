@@ -1,17 +1,11 @@
-import { uploadMiddleware } from './../middlewares/uploadMiddleware';
-import { Context, Hono } from 'hono';
-import { createVehicle, deleteVehicle, getVehicle, getVehicles, updateVehicle } from './vehicles.controller';
-import { zValidator } from '@hono/zod-validator';
-import { VehicleSchema } from '../validators';
+import { Hono } from 'hono';
+import { createVehicle, deleteVehicle, getVehicle, getVehicles, updateVehicle, uploadImage } from './vehicles.controller';
 
-export const VehicleRouter = new Hono();
+export const vehiclesRouter = new Hono();
 
-VehicleRouter.get('/vehicles', getVehicles);
-VehicleRouter.get('/vehicles/:id', getVehicle);
-VehicleRouter.post('/vehicles', uploadMiddleware, zValidator('json', VehicleSchema, (result: any, c: Context) => {
-  if (!result.success) {
-    return c.json(result.error, 400);
-  }
-}), createVehicle);
-VehicleRouter.put('/vehicles/:id', uploadMiddleware, updateVehicle);
-VehicleRouter.delete('/vehicles/:id', deleteVehicle);
+vehiclesRouter.get('/vehicles', getVehicles);             // Get all vehicles
+vehiclesRouter.get('/vehicles/:id', getVehicle);          // Get a single vehicle by id
+vehiclesRouter.post('/vehicles', createVehicle);          // Create a new vehicle
+vehiclesRouter.put('/vehicles/:id', updateVehicle);       // Update a vehicle
+vehiclesRouter.delete('/vehicles/:id', deleteVehicle);    // Delete a vehicle
+vehiclesRouter.post('/cloudinary/upload', uploadImage);

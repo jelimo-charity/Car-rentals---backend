@@ -27,6 +27,11 @@ CREATE TABLE IF NOT EXISTS "customer_support_tickets" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "Featured" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"vehicle_id" integer NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "fleet_management" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"vehicle_id" integer NOT NULL,
@@ -88,6 +93,7 @@ CREATE TABLE IF NOT EXISTS "vehicles" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"rental_rate" numeric NOT NULL,
 	"availability" boolean DEFAULT true,
+	"image_url" varchar(255) NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -118,6 +124,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "customer_support_tickets" ADD CONSTRAINT "customer_support_tickets_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "Featured" ADD CONSTRAINT "Featured_vehicle_id_vehicles_id_fk" FOREIGN KEY ("vehicle_id") REFERENCES "public"."vehicles"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

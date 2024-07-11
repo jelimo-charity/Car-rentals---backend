@@ -4,6 +4,8 @@ import {
     deleteBooking, 
     getBooking, 
     getBookings, 
+    getBookingsByUserId, 
+    getBookingVehicles, 
     updateBooking 
 } from "./bookings.controller";
 import { zValidator } from "@hono/zod-validator";
@@ -26,3 +28,8 @@ BookingRouter.put('/bookings/:id', zValidator("json", BookingSchema, (result: an
     }
 }), updateBooking);
 BookingRouter.delete('/bookings/:id', deleteBooking);
+
+
+BookingRouter.get('/bookings/users/:id', getBookingsByUserId)
+BookingRouter.get('/bookings/vehicles/:id', getBookingsByUserId)
+BookingRouter.get("/bookedVehicles", getBookingVehicles)

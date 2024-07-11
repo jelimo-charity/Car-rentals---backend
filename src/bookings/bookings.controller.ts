@@ -1,5 +1,6 @@
 import { Context } from "hono";
-import {  createBookingService, deleteBookingService, getBookingService, getBookingsService, updateBookingService } from "./bookings.service";
+import {  createBookingService, deleteBookingService, getBookingService, getBookingsService, updateBookingService,  getBookingsByUserIdService, getBookedVehiclesService, getBookingVehicleService } from "./bookings.service";
+import { exceptAll } from "drizzle-orm/mysql-core";
 
 
 export const getBookings = async(c: Context) => {
@@ -74,4 +75,48 @@ export const deleteBooking = async (c: Context) => {
         return c.json({ error: error?.message }, 400);
     }
 };
+
+//booking and users
+export const getBookingsByUserId = async (c:Context) =>{
+    try {
+        const id = parseInt(c.req.param('id'));
+        if(isNaN(id)) return c.text("Invalid ID", 400);
+ 
+        const bookings = await getBookingsByUserIdService(id);
+        if(!bookings){
+            return c.json({message: 'Booking not found'}, 404);
+        }
+        return c.json(bookings, 200);
+    } catch (error: any) {
+        return c.json({error: error.message}, 400);
+    }
+ 
+}
+
+//booked vehicles
+export const getBookedVehicles = async (c:Context) =>{
+    try {
+        const id = parseInt(c.req.param('id'));
+        if(isNaN(id)) return c.text("Invalid ID", 400);
+ 
+        const bookings = await getBookedVehiclesService(id);
+        if(!bookings){
+            return c.json({message: 'Booking not found'}, 404);
+        }
+        return c.json(bookings, 200);
+    } catch (error: any) {
+        return c.json({error: error.message}, 400);
+    }
+ 
+}
+
+
+export const getBookingVehicles = async(c:Context) => {
+ 
+    const bookedVehiclesInfo = await getBookingVehicleService();
+    if (bookedVehiclesInfo == undefined) {
+        return c.text("restaurantsInfo not found", 404);
+    }
+    return c.json(bookedVehiclesInfo, 200);
+  }
 
