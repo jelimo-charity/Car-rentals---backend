@@ -1,5 +1,5 @@
 {
-  "id": "8524cb0b-4550-4352-b884-1b0ba773b462",
+  "id": "8c853db1-7b8b-4d28-ba42-0ddaa310a94f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -325,7 +325,7 @@
         },
         "contact_phone": {
           "name": "contact_phone",
-          "type": "varchar(15)",
+          "type": "varchar",
           "primaryKey": false,
           "notNull": true
         },
@@ -484,8 +484,8 @@
         }
       }
     },
-    "public.vehicle_specifications": {
-      "name": "vehicle_specifications",
+    "public.vehicles": {
+      "name": "vehicles",
       "schema": "",
       "columns": {
         "id": {
@@ -494,9 +494,22 @@
           "primaryKey": true,
           "notNull": true
         },
-        "vehicle_id": {
-          "name": "vehicle_id",
+        "rental_rate": {
+          "name": "rental_rate",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "availability": {
+          "name": "availability",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "image_url": {
+          "name": "image_url",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },
@@ -524,82 +537,15 @@
           "primaryKey": false,
           "notNull": true
         },
-        "engine_capacity": {
-          "name": "engine_capacity",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "transmission": {
-          "name": "transmission",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "seating_capacity": {
           "name": "seating_capacity",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
-        "color": {
-          "name": "color",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "features": {
           "name": "features",
           "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "vehicle_specifications_vehicle_id_vehicles_id_fk": {
-          "name": "vehicle_specifications_vehicle_id_vehicles_id_fk",
-          "tableFrom": "vehicle_specifications",
-          "tableTo": "vehicles",
-          "columnsFrom": [
-            "vehicle_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.vehicles": {
-      "name": "vehicles",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "rental_rate": {
-          "name": "rental_rate",
-          "type": "numeric",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "availability": {
-          "name": "availability",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": false,
-          "default": true
-        },
-        "image_url": {
-          "name": "image_url",
-          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": true
         },

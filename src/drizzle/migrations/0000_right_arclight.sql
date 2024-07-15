@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS "locations" (
 	"id" serial PRIMARY KEY NOT NULL,
 	"name" varchar(255) NOT NULL,
 	"address" varchar(255) NOT NULL,
-	"contact_phone" varchar(15) NOT NULL,
+	"contact_phone" varchar NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -75,25 +75,17 @@ CREATE TABLE IF NOT EXISTS "users" (
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "vehicle_specifications" (
+CREATE TABLE IF NOT EXISTS "vehicles" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"vehicle_id" integer NOT NULL,
+	"rental_rate" integer NOT NULL,
+	"availability" boolean DEFAULT true,
+	"image_url" varchar(255) NOT NULL,
 	"manufacturer" varchar(255) NOT NULL,
 	"model" varchar(255) NOT NULL,
 	"year" integer NOT NULL,
 	"fuel_type" varchar(50) NOT NULL,
-	"engine_capacity" varchar(50) NOT NULL,
-	"transmission" varchar(50) NOT NULL,
 	"seating_capacity" integer NOT NULL,
-	"color" varchar(50) NOT NULL,
-	"features" text NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "vehicles" (
-	"id" serial PRIMARY KEY NOT NULL,
-	"rental_rate" numeric NOT NULL,
-	"availability" boolean DEFAULT true,
-	"image_url" varchar(255) NOT NULL,
+	"features" text NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
@@ -142,12 +134,6 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "payments" ADD CONSTRAINT "payments_booking_id_bookings_id_fk" FOREIGN KEY ("booking_id") REFERENCES "public"."bookings"("id") ON DELETE cascade ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "vehicle_specifications" ADD CONSTRAINT "vehicle_specifications_vehicle_id_vehicles_id_fk" FOREIGN KEY ("vehicle_id") REFERENCES "public"."vehicles"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

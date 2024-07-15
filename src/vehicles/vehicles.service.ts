@@ -1,41 +1,38 @@
-
+import { db } from './../drizzle/db';
 import { eq } from 'drizzle-orm';
-import { TIVehicle, TSVehicle, Vehicles } from '../drizzle/schema';
-import { db } from '../drizzle/db';
+import { Vehicles, TIVehicle, TSVehicle } from '../drizzle/schema';
 
-// Get all Vehicles
-export const VehiclesService = async (limit?: number): Promise<TSVehicle[] | null> => {
-    if (limit) {
-        return await db.select().from(Vehicles).limit(limit).execute();
-    }
-    return await db.select().from(Vehicles).execute();
-}
+export const getVehiclesService = async (): Promise<TSVehicle[] | null> => {
+  const vehiclesData = await db.select().from(Vehicles);
+  return vehiclesData;
+};
 
-// Get a single Vehicle by id
 export const getVehicleService = async (id: number): Promise<TSVehicle | undefined> => {
-    const VehicleArray = await db.select().from(Vehicles).where(eq(Vehicles.id, id)).execute();
+  const vehicleData = await db.select().from(Vehicles).where(eq(Vehicles.id, id)).execute();
+  if (vehicleData.length === 0) {
+    return undefined;
+  }
+  return vehicleData[0];
+};
 
-    if (VehicleArray.length === 0) {
-        return undefined;
-    }
+export const createVehicleService = async (vehicle: TIVehicle) => {
+  await db.insert(Vehicles).values(vehicle).execute();
+  return "Vehicle created successfully";
+};
 
-    return VehicleArray[0];
-}
+export const updateVehicleService = async (id: number, vehicle: TIVehicle): Promise<string> => {
+  await db.update(Vehicles).set(vehicle).where(eq(Vehicles.id, id)).execute();
+  return "Vehicle updated successfully";
+};
 
-// Create a new Vehicle
-export const createVehicleService = async (Vehicle: TIVehicle) => {
-    await db.insert(Vehicles).values(Vehicle).execute();
-    return "Vehicle created successfully";
-}
-
-// Update a Vehicle
-export const updateVehicleService = async (id: number, Vehicle: TIVehicle) => {
-    await db.update(Vehicles).set(Vehicle).where(eq(Vehicles.id, id)).execute();
-    return "Vehicle updated successfully";
-}
-
-// Delete a Vehicle
 export const deleteVehicleService = async (id: number) => {
-    await db.delete(Vehicles).where(eq(Vehicles.id, id)).execute();
-    return "Vehicle deleted successfully";
-}
+  await db.delete(Vehicles).where(eq(Vehicles.id, id)).execute();
+  return "Vehicle deleted successfully";
+};
+
+// Additional Service Functions
+
+// Example: Get vehicles by manufacturer
+export const getVehiclesByManufacturerService = async (manufacturer: string): Promise<TSVehicle[] | undefined> => {
+  return await db.select().from(Vehicles).where(eq(Vehicles.manufacturer, manufacturer)).execute();
+};

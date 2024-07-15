@@ -1,4 +1,3 @@
-import { getBooking } from './bookings.controller';
 import { db } from './../drizzle/db';
 import { eq } from 'drizzle-orm';
 import {   Bookings, TIBooking, TSBooking } from '../drizzle/schema';
@@ -23,7 +22,7 @@ export const createBookingService = async (book: TIBooking) => {
 };
 
 
-export const updateBookingService = async (id: number, book: TIBooking) => {
+export const updateBookingService = async (id: number, book: TIBooking) :Promise<string>=> {
     await db.update(Bookings).set(book).where(eq(Bookings.id, id)).execute();
     return "Bookings updated successfully";
 };
@@ -62,7 +61,7 @@ export const getBookingVehicleService = async () => {
       with: {
         vehicle: {
           columns: {
-            rental_rate: true,
+            rental_price: true,
             availability: true,
             image_url: true,
             created_at: true,

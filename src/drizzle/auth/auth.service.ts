@@ -6,12 +6,6 @@ import jwt from  'jsonwebtoken';
 import 'dotenv/config';
 
 
-// import { db } from './../db';
-// import bcrypt from 'bcrypt';
-// import { eq } from 'drizzle-orm';
-// import { auth, TSUser, Users } from '../schema';
-// import jwt from  'jsonwebtoken';
-// import 'dotenv/config';
 
 const secret = process.env.SECRET!;
 const expiresIn = process.env.EXPIRESIN!;

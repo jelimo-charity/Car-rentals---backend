@@ -21,23 +21,18 @@ export const AuthSchema = z.object({
 export const VehicleSchema = z.object({
   rental_rate: z.number(),
   availability: z.boolean(),
+  manufacturer: z.string().max(255),
+  model: z.string().max(255),
+  year: z.number().int(),
+  fuel_type: z.string().max(50),
+  seating_capacity: z.number().int(),
+  features: z.string(),
   image_url: z.string().url(),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),
 });
 
-export const VehicleSpecificationSchema = z.object({
-  vehicle_id: z.number().int(),
-  manufacturer: z.string().max(255),
-  model: z.string().max(255),
-  year: z.number().int(),
-  fuel_type: z.string().max(50),
-  engine_capacity: z.string().max(50),
-  transmission: z.string().max(50),
-  seating_capacity: z.number().int(),
-  color: z.string().max(50),
-  features: z.string(),
-});
+
 
 
 export const BookingSchema = z.object({

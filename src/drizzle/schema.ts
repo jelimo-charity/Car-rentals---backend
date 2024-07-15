@@ -13,8 +13,7 @@ export type TSAuth = typeof auth.$inferSelect;
 export type TIVehicle = typeof Vehicles.$inferInsert;
 export type TSVehicle = typeof Vehicles.$inferSelect;
 
-export type TIVehicleSpecification = typeof VehicleSpecifications.$inferInsert;
-export type TSVehicleSpecification = typeof VehicleSpecifications.$inferSelect;
+
 
 export type TIBooking = typeof Bookings.$inferInsert;
 export type TSBooking = typeof Bookings.$inferSelect;
@@ -57,28 +56,20 @@ export const Users = pgTable('users', {
 
 export const Vehicles = pgTable('vehicles', {
     id: serial('id').primaryKey(),
-    rental_rate: integer('rental_rate').notNull(),
+    rental_price: integer('rental_rate').notNull(),
     availability: boolean('availability').default(true),
     image_url: varchar('image_url', { length: 255 }).notNull(),
-    created_at: timestamp('created_at').defaultNow().notNull(),
-    updated_at: timestamp('updated_at').defaultNow().notNull(),
-  });
-
-//4. VehicleSpecifications table 
-export const VehicleSpecifications = pgTable('vehicle_specifications', {
-    id: serial('id').primaryKey(),
-    vehicle_id: integer('vehicle_id').notNull().references(()=>Vehicles.id, {onDelete: "cascade"}),
     manufacturer: varchar('manufacturer', { length: 255 }).notNull(),
     model: varchar('model', { length: 255 }).notNull(),
     year: integer('year').notNull(),
     fuel_type: varchar('fuel_type', { length: 50 }).notNull(),
-    engine_capacity: varchar('engine_capacity', { length: 50 }).notNull(),
-    transmission: varchar('transmission', { length: 50 }).notNull(),
     seating_capacity: integer('seating_capacity').notNull(),
-    color: varchar('color', { length: 50 }).notNull(),
     features: text('features').notNull(),
- 
+    created_at: timestamp('created_at').defaultNow().notNull(),
+    updated_at: timestamp('updated_at').defaultNow().notNull(),
   });
+
+
 
 
 //5. Bookings table 
@@ -164,10 +155,7 @@ export const userRelations = relations(Users, ({ one, many }) => ({
 
 // Vehicles and VehicleSpecifications relations
 export const vehicleRelations = relations(Vehicles, ({ one, many }) => ({
-  vehicleSpecifications: one(VehicleSpecifications, {
-    fields: [Vehicles.id],
-    references: [VehicleSpecifications.vehicle_id]
-  }),
+ 
   bookings: one(Bookings, {
     fields: [Vehicles.id],
     references: [Bookings.vehicle_id]
