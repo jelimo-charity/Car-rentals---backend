@@ -10,14 +10,10 @@ import { CustomerSupportTicketRouter } from "./customerSupport/customerSupport.r
 import { authRouter } from "./drizzle/auth/auth.router";
 import { usersRouter } from "./users/users.router";
 import { vehiclesRouter } from "./vehicles/vehicles.router";
-import express from 'express'
 const app = new Hono();
 
 app.use('/*', cors());
 
-const expressApp = express();
-expressApp.use(express.json({ limit: '50mb' }));
-expressApp.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 app.get("/", async (c) => {
    c.text("Hello World");
