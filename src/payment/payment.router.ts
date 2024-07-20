@@ -1,23 +1,13 @@
-import { z } from "zod";
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import {
-  getAllPayment,
-  getOnePayment,
-  createCheckout,
-  deletePayment,
-  success,
-  failed,
-} from "./payment.controller";
+import {createPaymentController,getPaymentByBookingController, updatePaymentController,deletePaymentController, getPayments, createCheckoutSessionController} from './payment.controller';
+// import { userRoleAuth,adminRoleAuth, adminOrUserAuth } from "../middleware/AuthorizeRole";
  
-export const paymentRoutes = new Hono();
+export const paymentsRouter = new Hono();
  
-paymentRoutes.get("/payments", getAllPayment);
-paymentRoutes.get("/payments/:id", getOnePayment);
-// paymentRoutes.post("/payments", createPayment);
-paymentRoutes.delete("/payments/:id", deletePayment);
- 
-//=========payment implementation=====
-paymentRoutes.post("/checkout", createCheckout);
-paymentRoutes.get("/success", success);
-paymentRoutes.get("/cancel", failed);
+paymentsRouter.post('/payments',createPaymentController);
+paymentsRouter.get('/payments', getPayments);
+
+paymentsRouter.get('/payments/:booking_id', getPaymentByBookingController);
+paymentsRouter.put('/payments/:id', updatePaymentController);
+paymentsRouter.delete('/payments/:id', deletePaymentController);
+paymentsRouter.post('/checkout-session', createCheckoutSessionController);

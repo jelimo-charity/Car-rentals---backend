@@ -1,5 +1,5 @@
 import { Context } from "hono";
-import {  createBookingService, deleteBookingService, getBookingService, getBookingsService, updateBookingService,  getBookingsByUserIdService, getBookedVehiclesService, getBookingVehicleService } from "./bookings.service";
+import {  createBookingService, deleteBookingService, getBookingService, getBookingsService, updateBookingService,   getBookingVehicleService, getUserWithBookingDetailsById } from "./bookings.service";
 import { exceptAll } from "drizzle-orm/mysql-core";
 
 
@@ -30,10 +30,23 @@ export const getBooking = async (c: Context) => {
 
 export const createBooking = async (c: Context) => {
     try {
-        const Booking = await c.req.json();
-        const createdBooking = await createBookingService(Booking);
-        if (!createdBooking) return c.text("Book not created", 404);
-        return c.json({ msg: createdBooking }, 201);
+        const booking = await c.req.json();
+
+        // Convert date strings to Date objects
+        if (booking.booking_date) {
+            booking.booking_date = new Date(booking.booking_date);
+        }
+        if (booking.return_date) {
+            booking.return_date = new Date(booking.return_date);
+        }
+
+        const createdBooking = await createBookingService(booking);
+
+        if (!createdBooking) {
+            return c.text("Booking not created", 404);
+        }
+
+        return c.json({ id: createdBooking.id, msg: 'Booking created successfully' }, 201); 
     } catch (error: any) {
         return c.json({ error: error?.message }, 400);
     }
@@ -76,39 +89,39 @@ export const deleteBooking = async (c: Context) => {
     }
 };
 
-//booking and users
-export const getBookingsByUserId = async (c:Context) =>{
-    try {
-        const id = parseInt(c.req.param('id'));
-        if(isNaN(id)) return c.text("Invalid ID", 400);
+// //booking and users
+// export const getBookingsByid = async (c:Context) =>{
+//     try {
+//         const id = parseInt(c.req.param('id'));
+//         if(isNaN(id)) return c.text("Invalid ID", 400);
  
-        const bookings = await getBookingsByUserIdService(id);
-        if(!bookings){
-            return c.json({message: 'Booking not found'}, 404);
-        }
-        return c.json(bookings, 200);
-    } catch (error: any) {
-        return c.json({error: error.message}, 400);
-    }
+//         const bookings = await getBookingsByidService(id);
+//         if(!bookings){
+//             return c.json({message: 'Booking not found'}, 404);
+//         }
+//         return c.json(bookings, 200);
+//     } catch (error: any) {
+//         return c.json({error: error.message}, 400);
+//     }
  
-}
+// }
 
-//booked vehicles
-export const getBookedVehicles = async (c:Context) =>{
-    try {
-        const id = parseInt(c.req.param('id'));
-        if(isNaN(id)) return c.text("Invalid ID", 400);
+// //booked vehicles
+// export const getBookedVehicles = async (c:Context) =>{
+//     try {
+//         const id = parseInt(c.req.param('id'));
+//         if(isNaN(id)) return c.text("Invalid ID", 400);
  
-        const bookings = await getBookedVehiclesService(id);
-        if(!bookings){
-            return c.json({message: 'Booking not found'}, 404);
-        }
-        return c.json(bookings, 200);
-    } catch (error: any) {
-        return c.json({error: error.message}, 400);
-    }
+//         const bookings = await getBookedVehiclesService(id);
+//         if(!bookings){
+//             return c.json({message: 'Booking not found'}, 404);
+//         }
+//         return c.json(bookings, 200);
+//     } catch (error: any) {
+//         return c.json({error: error.message}, 400);
+//     }
  
-}
+// }
 
 
 export const getBookingVehicles = async(c:Context) => {
@@ -120,3 +133,17 @@ export const getBookingVehicles = async(c:Context) => {
     return c.json(bookedVehiclesInfo, 200);
   }
 
+  export const getBookingsWithIdController = async  (c: Context) =>{
+    const id = parseInt(c.req.param('id'), 10);
+ 
+    if(isNaN(id)){
+        return c.json({error: 'Invalid user ID'}, 400)
+    }
+ 
+    try {
+        const bookings = await getUserWithBookingDetailsById(id);
+        return c.json(bookings, 200);
+    } catch (error: any) {
+      return c.json({error: error.message}, 500)  
+    }
+}

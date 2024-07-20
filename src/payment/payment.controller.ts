@@ -1,142 +1,172 @@
-import { Vehicles, VehicleSpecifications } from './../drizzle/schema';
-import Stripe from "stripe";
-import {
-  
-    createPaymentservice,
-    getAllPaymentservice,
-  getOnePaymentservice,
-  getUserbooking,
-  servePaymentDelete,
-} from "./payment.service";
-import "dotenv/config";
 import { Context } from "hono";
-const stripe = new Stripe(process.env.STRIPE_KEY as string);
+import { createPaymentService,getPaymentByBookingService, updatePaymentService,deletePaymentService, updatePaymentSessionIdService, getPaymentsService} from "./payment.service";
+import { stripe } from "../drizzle/db";
+import Stripe from "stripe";
+// import { ClientURL } from "../utils/utils";
+import "dotenv/config";
+import { ClientURL } from "../utils/utils";
  
-export async function getAllPayment(c: Context) {
-  try {
-    const payments = await getAllPaymentservice();
-    if (payments === null) {
-      return c.json({ error: "Server error" }, 500);
-    }
-    if (payments?.length === 0) {
-      return c.json({ error: "No payments registered" }, 500);
-    }
-    return c.json(payments);
-  } catch (error) {
-    return c.json({ error }, 404);
-  }
-}
- 
-export async function getOnePayment(c: Context) {
-  const id = Number(c.req.param("id"));
-  try {
-    const payments = await getOnePaymentservice(id);
-    if (payments === null) {
-      return c.json({ error: "Server error" }, 500);
-    }
-    if (payments?.length === 0) {
-      return c.json({ error: "No payment registered" }, 500);
-    }
-    return c.json(payments);
-  } catch (error) {
-    return c.json({ error }, 404);
-  }
-}
- 
-export async function deletePayment(c: Context) {
-  const id = Number(c.req.param("id"));
-  try {
-    const deleted = await servePaymentDelete(id);
-    if (deleted === null) {
-      return c.json({ error: "Server error" }, 500);
-    }
-    if (deleted?.length === 0) {
-      return c.json({ error: "Payment does not exist" }, 404);
-    }
-    return c.json(deleted);
-  } catch (error) {
-    return c.json({ error }, 404);
-  }
-}
- 
-export async function createCheckout(c: Context) {
-  //  Create here items to be payed for
- 
-  //get with user id
-  const getBookings = await getUserbooking(1);
+export const createPaymentController = async (c:Context) =>{
 
- 
-  console.log(getBookings);
- 
-  const vehiclesToBePaid = getBookings.map((vehicle) => ({
-    price_data: {
-      currency: "usd",
-      product_data: {
-        name: vehicle.vehicle?.  vehicleSpecifications?.manufacturer,
-      },
-      unit_amount: Number(vehicle.total_amount) * 100,
-    },
-    quantity: 2,
-  }));
- 
-  const session = await stripe.checkout.sessions.create({
-    line_items: vehiclesToBePaid,
-    mode: "payment",
-    success_url:
-      `${process.env.BASE_URL}/success?session_id={CHECKOUT_SESSION_ID}` as string,
-    cancel_url: `${process.env.BASE_URL}/cancel`,
-  });
-  console.log(session.url);
-  return c.text("Hello");
+    try {
+        const payment = await c.req.json();
+        if(payment.payment_date){
+           payment.payment_date = new Date(payment.payment_date)
+        }
+        const result = await createPaymentService(payment);
+        return c.json(result, 201);
+    } catch (error: any) {
+        return c.json({error: error.message}, 400);
+    }
 }
  
-export async function success(c: Context) {
-  const sessionId: string | undefined = c.req.query("session_id");
- 
-  if (!sessionId) {
-    return c.json({ error: "session_id is required" }, 400);
+export const getPayments = async (c:Context) =>{
+  try {
+      const payment = await getPaymentsService();
+      if(!payment){
+          return c.json({message: 'Payment not found'}, 404);
+      }
+      return c.json(payment, 200);
+  } catch (error: any) {
+      return c.json({error: error.message}, 400);
   }
- 
-  const session = await stripe.checkout.sessions.retrieve(sessionId);
-  console.log(session);
- 
-  const createdTimestamp = session.created;
-  const createdDate = new Date(createdTimestamp * 1000);
- 
-  const paymentDetails = {
-    bookingId: 5,
-    amount: session.amount_total && session.amount_total / 100,
-    paymentStatus: session.status,
-    paymentDate: createdDate.toISOString(),
-    paymentMethod:
-      session.payment_method_options &&
-      Object.keys(session.payment_method_options)[0],
-    transactionId: session.payment_intent,
-  };
-  await createPaymentservice(paymentDetails);
-  return c.text("Successfull payment");
 }
-export async function failed(c: Context) {
-  const sessionId: string | undefined = c.req.query("session_id");
-  if (!sessionId) {
-    return c.json({ error: "session_id is required" }, 400);
-  }
+
+export const getPaymentByBookingController = async (c:Context) =>{
+    try {
+        const {id} = c.req.param();
+        const payment = await getPaymentByBookingService(parseInt(id));
+        if(!payment){
+            return c.json({message: 'Payment not found'}, 404);
+        }
+        return c.json(payment, 200);
+    } catch (error: any) {
+        return c.json({error: error.message}, 400);
+    }
+}
  
-  const session = await stripe.checkout.sessions.retrieve(sessionId);
+export const updatePaymentController = async (c:Context) =>{
+    const id = parseInt(c.req.param('id'));
+    if(isNaN(id)) return c.text("Invalid ID", 400);
+    const payment = await c.req.json();
+    try {
+        //search
+        const searchpayment = await getPaymentByBookingService(id);
+        if(!searchpayment){
+            return c.json({message: 'Payment not found'}, 404);
+        }
+        //update payment
+        const result = await updatePaymentService(id, payment);
+        if(!result) return c.json({message: 'Payment not updated'}, 404);
+        return c.json({message: result}, 200);
+    } catch (error:any) {
+        return c.json({error: error.message}, 400);
+    }
+}
  
-  const createdTimestamp = session.created;
-  const createdDate = new Date(createdTimestamp * 1000);
  
-  const paymentDetails = {
-    bookingId: 5,
-    amount: session.amount_total && session.amount_total / 100,
-    paymentStatus: session.status,
-    paymentDate: createdDate.toISOString(),
-    paymentMethod:
-      session.payment_method_options &&
-      Object.keys(session.payment_method_options)[0],
-    transactionId: session.payment_intent,
-  };
-  await createPaymentservice(paymentDetails);
-  return c.text("failed payment");
+export const deletePaymentController = async (c:Context) =>{
+    const id = parseInt(c.req.param('id'));    
+    if(isNaN(id)) return c.text("Invalid ID", 400);
+    try {
+        //seach payment
+        const searchpayment = await getPaymentByBookingService(id);
+        if(!searchpayment){
+            return c.json({message: 'Payment not found'}, 404);
+        }
+        //delete payment
+        const result = await deletePaymentService(id);
+        return c.json({message: result}, 200);
+    } catch (error: any) {
+        return c.json({error: error.message}, 400);
+    }
+}
+ 
+// //Create a checkout session
+export const createCheckoutSessionController = async (c:Context) =>{
+    let booking;
+   try {
+    booking = await c.req.json();
+ 
+   } catch (error: any) {
+     return c.json({message: "Booking not found"}, 404);
+   }
+   try {
+    if(!booking.booking_id) return c.json({message: "Booking ID is Required"}, 404);
+ 
+    const line_items: Stripe.Checkout.SessionCreateParams.LineItem[] = [{
+        price_data: {
+            currency: 'usd',
+            product_data: {
+                name:  'Car Rental',
+            },
+            unit_amount: Math.round(booking.total_amount * 100), //convert to cents
+        },
+        quantity: 1,
+    }];
+    //checkout session
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
+        payment_method_types: ['card'],
+        line_items,
+        mode: 'payment',
+        success_url: `${ClientURL}/payment-successful`,
+        cancel_url: `${ClientURL}/payment-failed`,
+    };  
+    const session: Stripe.Checkout.Session =await stripe.checkout.sessions.create(sessionParams);
+    console.log(`Checkout Session URL : ${session.url}`);
+ 
+ 
+    //save the payments to the db
+    const paymentDetails = {
+        booking_id: booking.booking_id,
+        amount: booking.total_amount.toString(),
+        user_id: booking.user_id,
+        payment_date: new Date(),
+        payment_method: 'card',
+        transaction_id: session.id,
+    };
+ 
+    const createPayment = await createPaymentService(paymentDetails);
+    return c.json({sessionId: session.id, url: session.url, payment: createPayment}, 200);
+   } catch (error: any) {
+     return c.json({message: error.message}, 400);
+   }
+}
+ 
+ 
+//Webhook
+export const handleStripeWebhook = async (c:Context) =>{
+    const sig = c.req.header('stripe-signature');
+    const rawBody = await c.req.text();
+    if(!sig){
+        console.log('Signature not provided');
+        return c.json({message:'Invalid Signature'}, 400);
+    }
+    let event: Stripe.Event;
+    try {
+        event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_ENDPOINT_SECRET as string);
+    } catch (error: any) {
+        console.log("Error", error.message);
+        return c.json({ message: `WebHook Error: ${error.message}` }, 400);
+    }
+ 
+    //handling the event
+    switch(event.type){
+        case 'checkout.session.completed':
+            const session = event.data.object as Stripe.Checkout.Session;
+ 
+            //update the payment
+            try {
+               const session_id = session.id;
+               const updateStatus = await  updatePaymentSessionIdService(session_id);
+               return c.json({message: updateStatus}, 200);
+            } catch (error: any) {
+                return c.json({ message: `Database Error ${error.message}` }, 500);
+            }
+ 
+            //handle other events
+        default:
+            console.log(`Unhandled event type ${event.type}`);
+            return c.json({ message: `Unhandled event type ${event.type}` }, 200);
+    }
 }

@@ -6,7 +6,7 @@ export const getUsers = async (c: Context) => {
     try {
         const limit = c.req.query('limit');
         const users = await usersService(limit ? parseInt(limit) : undefined);
-        return c.json({ users }, 200);
+        return c.json(users, 200);
     } catch (error: any) {
         return c.json({ error: error.message }, 400);
     }

@@ -1,3 +1,4 @@
+import { Payments } from './../drizzle/schema';
 import { db } from './../drizzle/db';
 import { eq } from 'drizzle-orm';
 import {   Bookings, TIBooking, TSBooking } from '../drizzle/schema';
@@ -17,8 +18,8 @@ export const getBookingService = async (id: number): Promise<TSBooking | undefin
 };
 
 export const createBookingService = async (book: TIBooking) => {
-    await db.insert(Bookings).values(book).execute();
-    return "Book created successfully";
+    const [newBooking] = await db.insert(Bookings).values(book).returning().execute();
+    return newBooking;
 };
 
 
@@ -88,3 +89,48 @@ export const getBookingVehicleService = async () => {
     
 });
   }
+
+  //by userid
+
+   export const getUserWithBookingDetailsById = async (id: number): Promise<TSBooking[]> => {
+    return await db.query.Bookings.findMany({
+      where: eq(Bookings.user_id, id),
+      columns: {
+        id: true,
+        user_id: true,
+        created_at: true,
+        updated_at: true,
+        vehicle_id: true,
+        location_id: true,
+        booking_date: true,
+        return_date: true,
+        total_amount: true,
+        booking_status: true,
+      },
+      with: {
+        vehicle: {
+          columns: {
+            id: true,
+            manufacturer: true,
+            model: true,
+            rental_price: true,
+          },
+         
+        },
+        location: {
+          columns: {
+            name: true,
+          },
+        },
+        payment: {
+          columns: {
+            id: true,
+            payment_status: true,
+            
+          }
+        }
+      
+      },
+    });
+  };
+  

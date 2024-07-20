@@ -4,7 +4,7 @@ import {
     deleteBooking, 
     getBooking, 
     getBookings, 
-    getBookingsByUserId, 
+    getBookingsWithIdController, 
     getBookingVehicles, 
     updateBooking 
 } from "./bookings.controller";
@@ -17,6 +17,7 @@ export const BookingRouter = new Hono();
 // Define routes and attach respective controller functions
 BookingRouter.get('/bookings', getBookings);
 BookingRouter.get('/bookings/:id', getBooking);
+
 BookingRouter.post('/bookings', zValidator("json", BookingSchema, (result: any, c: Context) => {
     if (!result.success) {
         return c.json(result.error, 400);
@@ -30,6 +31,7 @@ BookingRouter.put('/bookings/:id', zValidator("json", BookingSchema, (result: an
 BookingRouter.delete('/bookings/:id', deleteBooking);
 
 
-BookingRouter.get('/bookings/users/:id', getBookingsByUserId)
-BookingRouter.get('/bookings/vehicles/:id', getBookingsByUserId)
+// BookingRouter.get('/bookings/users/:id', getBookingsByUserId)
+// BookingRouter.get('/bookings/vehicles/:id', getBookingsByUserId)
 BookingRouter.get("/bookedVehicles", getBookingVehicles)
+BookingRouter.get('/bookings/users/:id', getBookingsWithIdController)

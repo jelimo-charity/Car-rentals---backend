@@ -35,8 +35,22 @@ export const VehicleSchema = z.object({
 
 
 
+
+// export const BookingSchema = z.object({
+//   id: z.number().int().optional(), // Auto-generated, so it's optional
+//   user_id: z.number().int(),
+//   vehicle_id: z.number().int(),
+//   location_id: z.number().int(),
+//   booking_date: z.date(),
+//   return_date: z.date(),
+//   total_amount: z.number(),
+//   booking_status: z.string().max(50).optional(),
+//   created_at: z.date().optional(), // Auto-generated
+//   updated_at: z.date().optional(), // Auto-generated
+// });
+
 export const BookingSchema = z.object({
-  id: z.number().int().optional(), // Auto-generated, so it's optional
+  id: z.number().optional(),
   user_id: z.number().int(),
   vehicle_id: z.number().int(),
   location_id: z.number().int(),
@@ -44,9 +58,10 @@ export const BookingSchema = z.object({
   return_date: z.string(),
   total_amount: z.number(),
   booking_status: z.string().max(50).optional(),
-  created_at: z.date().optional(), // Auto-generated
-  updated_at: z.date().optional(), // Auto-generated
+  created_at: z.date().optional(),
+  updated_at: z.date().optional(),
 });
+
 
 export const LocationSchema = z.object({
   name: z.string().max(255),
