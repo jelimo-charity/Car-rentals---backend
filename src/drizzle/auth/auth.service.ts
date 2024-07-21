@@ -52,7 +52,7 @@ export const loginUserservice = async (email: string, password: string) => {
             throw new Error("Invalid credentials, try again");
         }
 
-        const userRoleArray = await db.select().from(auth).where(eq(auth.user_id, user.id)).execute();
+        const userRoleArray = await db.select().from(Users).where(eq(Users.id, user.id)).execute();
         if (userRoleArray.length === 0) {
             throw new Error("User role not found for the authenticated user");
         }
