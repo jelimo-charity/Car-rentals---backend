@@ -12,11 +12,11 @@ import { usersRouter } from "./users/users.router";
 import { vehiclesRouter } from "./vehicles/vehicles.router";
 const app = new Hono();
 
-app.use('/*', cors());
+app.use('*', cors());
 
 
 app.get("/", async (c) => {
-   c.text("Hello World");
+    return c.json({message: 'welcome to carent api'})
 });
  app.route('/', vehiclesRouter)
  app.route('/', BookingRouter) 
