@@ -42,6 +42,7 @@ export const Users = pgTable('users', {
   address: text('address').notNull(),
   created_at: timestamp('created_at').defaultNow().notNull(),
   updated_at: timestamp('updated_at').defaultNow().notNull(),
+  role: userRoles('role').default('user').notNull(),
 });
 
 //2. AUTH TABLE

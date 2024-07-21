@@ -27,16 +27,11 @@ export const registerUserservice = async (user: TSUser) => {
             password: hashedPassword,
             contact_phone: user.contact_phone,
             address: user.address,
+            role: user.role,
             created_at: new Date(),
-            updated_at: new Date()
+            updated_at: new Date(), 
+          
         }).returning({ id: Users.id }).execute();
-
-        const newUserId = newUser[0].id;
-
-        await db.insert(auth).values({
-            user_id: newUserId,
-            role: 'user'
-        }).execute();
 
         return 'User created successfully';
     } catch (error) {
@@ -66,6 +61,7 @@ export const loginUserservice = async (email: string, password: string) => {
 
         return { token, user };
     } catch (error) {
+         
         console.error("Error in loginUserservice:", error);
         throw new Error("Login failed");
     }
