@@ -116,7 +116,6 @@ export const CustomerSupportTickets = pgTable('customer_support_tickets', {
     user_id: integer('user_id').notNull().references(() => Users.id, { onDelete: 'cascade' }),
     subject: varchar('subject', { length: 255 }).notNull(),
     description: varchar('description', { length: 1000 }).notNull(),
-    status: varchar('status', { length: 50 }).notNull(),
     created_at: timestamp('created_at').defaultNow().notNull(),
     updated_at: timestamp('updated_at').defaultNow().notNull(),
   });

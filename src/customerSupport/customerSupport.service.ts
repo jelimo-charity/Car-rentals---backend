@@ -16,16 +16,16 @@ export const getCustomerSupportTicketservice = async (id: number): Promise<TSCus
     return CustomerSupportTicketsData[0];
 };
 
-export const createCustomerSupportTicketservice = async (book: TICustomerSupportTicket
+export const createCustomerSupportTicketservice = async (ticket: TICustomerSupportTicket
 
 ) => {
-    await db.insert(CustomerSupportTickets).values(book).execute();
-    return "Book created successfully";
+    await db.insert(CustomerSupportTickets).values(ticket).execute();
+    return "ticket created successfully";
 };
 
 
-export const updateCustomerSupportTicketservice = async (id: number, book: TICustomerSupportTicket) => {
-    await db.update(CustomerSupportTickets).set(book).where(eq(CustomerSupportTickets.id, id)).execute();
+export const updateCustomerSupportTicketservice = async (id: number, ticket: TICustomerSupportTicket) => {
+    await db.update(CustomerSupportTickets).set(ticket).where(eq(CustomerSupportTickets.id, id)).execute();
     return "CustomerSupportTickets updated successfully";
 };
 

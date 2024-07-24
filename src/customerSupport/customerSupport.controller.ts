@@ -31,7 +31,7 @@ export const createCustomerSupportTicket = async (c: Context) => {
     try {
         const CustomerSupportTicket = await c.req.json();
         const createdCustomerSupportTicket = await createCustomerSupportTicketservice(CustomerSupportTicket);
-        if (!createdCustomerSupportTicket) return c.text("Book not created", 404);
+        if (!createdCustomerSupportTicket) return c.text("ticket not created", 404);
         return c.json({ msg: createdCustomerSupportTicket }, 201);
     } catch (error: any) {
         return c.json({ error: error?.message }, 400);
@@ -65,8 +65,8 @@ export const deleteCustomerSupportTicket = async (c: Context) => {
     if (isNaN(id)) return c.text("Invalid ID", 400);
 
     try {
-        const book = await getCustomerSupportTicketservice(id);
-        if (!book) return c.text("CustomerSupportTicket not found", 404);
+        const ticket = await getCustomerSupportTicketservice(id);
+        if (!ticket) return c.text("CustomerSupportTicket not found", 404);
         const res = await deleteCustomerSupportTicketservice(id);
         if (!res) return c.text("CustomerSupportTicket not deleted", 404);
         return c.json({ msg: res }, 201);

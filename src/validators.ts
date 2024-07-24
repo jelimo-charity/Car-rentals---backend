@@ -82,11 +82,10 @@ export const PaymentSchema = z.object({
 });
 
 export const CustomerSupportTicketSchema = z.object({
-  id: z.number().int(),
+  id: z.number().int().optional(),
   user_id: z.number().int(),
   subject: z.string().max(255),
   description: z.string().max(1000),
-  status: z.string().max(50),
   created_at: z.date().optional(),
   updated_at: z.date().optional(),
 });

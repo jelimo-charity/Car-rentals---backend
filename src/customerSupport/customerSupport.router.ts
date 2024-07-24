@@ -7,16 +7,16 @@ import { CustomerSupportTicketSchema } from "../validators";
 export const CustomerSupportTicketRouter = new Hono();
 
 // Define routes and attach respective controller functions
-CustomerSupportTicketRouter.get('/CustomerSupportTickets', getCustomerSupportTickets);
-CustomerSupportTicketRouter.get('/CustomerSupportTickets/:id', getCustomerSupportTicket);
-CustomerSupportTicketRouter.post('/CustomerSupportTickets', zValidator("json", CustomerSupportTicketSchema, (result: any, c: Context) => {
+CustomerSupportTicketRouter.get('/customers', getCustomerSupportTickets);
+CustomerSupportTicketRouter.get('/customers/:id', getCustomerSupportTicket);
+CustomerSupportTicketRouter.post('/customers', zValidator("json", CustomerSupportTicketSchema, (result: any, c: Context) => {
     if (!result.success) {
         return c.json(result.error, 400);
     }
 }), createCustomerSupportTicket);
-CustomerSupportTicketRouter.put('/CustomerSupportTickets/:id', zValidator("json", CustomerSupportTicketSchema, (result: any, c: Context) => {
+CustomerSupportTicketRouter.put('/customers/:id', zValidator("json", CustomerSupportTicketSchema, (result: any, c: Context) => {
     if (!result.success) {
         return c.json(result.error, 400);
     }
 }), updateCustomerSupportTicket);
-CustomerSupportTicketRouter.delete('/CustomerSupportTickets/:id', deleteCustomerSupportTicket);
+CustomerSupportTicketRouter.delete('/customers/:id', deleteCustomerSupportTicket);

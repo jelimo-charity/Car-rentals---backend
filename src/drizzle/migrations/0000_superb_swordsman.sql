@@ -22,7 +22,6 @@ CREATE TABLE IF NOT EXISTS "customer_support_tickets" (
 	"user_id" integer NOT NULL,
 	"subject" varchar(255) NOT NULL,
 	"description" varchar(1000) NOT NULL,
-	"status" varchar(50) NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
