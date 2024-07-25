@@ -1,1 +1,1 @@
-export const ClientURL = "https://ashy-sky-0e71c8303.5.azurestaticapps.net"
+export const ClientURL = "http://localhost:5173"
