@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js app to Azure Web App - renttcar
+name: Build and deploy Node.js app to Azure Web App - rentcarsys
 
 on:
   push:
@@ -57,15 +57,15 @@ jobs:
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_6A683D4A344945FF82DF5A61F921AEC8 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_847932832D6C493D8F5D6CA589F4FE9F }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_72A70F1535614E0F9AABDE40E2658492 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_961B3743140E40D781592D8963F87F53 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_8A9082252D5D498DAA34AEC6EC15BF59 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AED519E6FFEF47A9B4009BCFFC2972D1 }}
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'renttcar'
+          app-name: 'rentcarsys'
           slot-name: 'Production'
           package: .
           
